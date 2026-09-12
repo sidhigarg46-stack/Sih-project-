@@ -65,7 +65,7 @@ def read_root():
 @app.post("/batches/analyze", response_model=BatchAnalysisResponse)
 async def analyze_batch(
     file: UploadFile = File(...),
-    reference_diameter_mm: float = Form(23.0),
+    reference_diameter_mm: float = Form(27.0),
     base_market_price: float = Form(30.0)
 ):
     """

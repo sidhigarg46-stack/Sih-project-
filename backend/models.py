@@ -129,6 +129,6 @@ class InspectionRecordResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class CalibrationConfig(BaseModel):
-    reference_type: ReferenceObjectType = Field(default=ReferenceObjectType.INR_5_COIN)
-    known_dimension_mm: float = Field(default=23.0, description="Diameter or width in mm of calibration reference")
+    reference_type: ReferenceObjectType = Field(default=ReferenceObjectType.INR_10_COIN)
+    known_dimension_mm: float = Field(default=27.0, description="Diameter or width in mm of calibration reference")
     base_market_price: float = Field(default=30.0, description="Base reference mandi price in INR/kg")

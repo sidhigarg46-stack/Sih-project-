@@ -16,8 +16,8 @@ import {
 export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [refType, setRefType] = useState('INR_5_COIN');
-  const [knownDiameter, setKnownDiameter] = useState(23.0);
+  const [refType, setRefType] = useState('INR_10_COIN');
+  const [knownDiameter, setKnownDiameter] = useState(27.0);
   const [basePrice, setBasePrice] = useState(30.0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [pipelineStep, setPipelineStep] = useState('');
@@ -163,7 +163,7 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
 
       ctx.fillStyle = '#3E2723';
       ctx.font = 'bold 16px sans-serif';
-      ctx.fillText('₹5 COIN', 118, 155);
+      ctx.fillText('₹10 COIN', 114, 155);
 
       // Healthy onion
       ctx.beginPath();
@@ -274,7 +274,7 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
             formData.append('file', testFile);
             formData.append(
               'reference_diameter_mm',
-              '23.0'
+              '27.0'
             );
             formData.append(
               'base_market_price',

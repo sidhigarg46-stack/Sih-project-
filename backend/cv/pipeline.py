@@ -17,7 +17,7 @@ from .defect_detector import detect_onion_defects
 
 def run_vision_pipeline(
     image_bytes: bytes,
-    known_reference_diameter_mm: float = 23.0,
+    known_reference_diameter_mm: float = 27.0,
     output_dir: Path = Path("storage")
 ) -> Dict[str, Any]:
     """

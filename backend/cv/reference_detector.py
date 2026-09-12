@@ -10,7 +10,7 @@ from typing import Tuple, Optional, Dict, Any
 
 def detect_reference_object(
     image_bgr: np.ndarray,
-    known_diameter_mm: float = 23.0, # Standard INR 5 coin diameter
+    known_diameter_mm: float = 27.0, # Standard INR 10 coin diameter
     roi_fraction_x: float = 0.28,    # Guide area in top-left
     roi_fraction_y: float = 0.28
 ) -> Tuple[float, Optional[Tuple[int, int, int]], Dict[str, Any]]:
