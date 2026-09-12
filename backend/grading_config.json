@@ -1,0 +1,63 @@
+{
+  "standard_name": "AGMARK & National Horticulture Board (NHB) Onion Standards",
+  "size_classification": {
+    "grade_a_min_diameter_mm": 60.0,
+    "grade_b_min_diameter_mm": 40.0,
+    "grade_b_max_diameter_mm": 60.0,
+    "urs_max_diameter_mm": 40.0
+  },
+  "grade_specifications": {
+    "Extra": {
+      "max_rot_pct": 0.0,
+      "max_sprout_pct": 0.0,
+      "max_damage_pct": 3.0,
+      "min_grade_a_pct": 50.0,
+      "max_urs_pct": 3.0,
+      "min_circularity": 0.85
+    },
+    "Standard": {
+      "max_rot_pct": 2.0,
+      "max_sprout_pct": 3.0,
+      "max_damage_pct": 8.0,
+      "min_grade_a_pct": 20.0,
+      "max_urs_pct": 10.0,
+      "min_circularity": 0.75
+    },
+    "Commercial": {
+      "max_rot_pct": 5.0,
+      "max_sprout_pct": 8.0,
+      "max_damage_pct": 15.0,
+      "min_grade_a_pct": 0.0,
+      "max_urs_pct": 25.0,
+      "min_circularity": 0.65
+    }
+  },
+  "pricing_model": {
+    "default_base_price_inr": 30.0,
+    "min_price_floor_inr": 5.0,
+    "uniformity_thresholds": [
+      { "max_cv": 10.0, "adjustment_pct": 5.0 },
+      { "max_cv": 20.0, "adjustment_pct": 0.0 },
+      { "max_cv": 30.0, "adjustment_pct": -5.0 },
+      { "max_cv": 999.0, "adjustment_pct": -10.0 }
+    ],
+    "penalty_multipliers": {
+      "rot": 3.5,
+      "sprout": 2.0,
+      "damage": 1.2,
+      "urs": 0.8
+    }
+  },
+  "sell_priority_model": {
+    "risk_weights": {
+      "rot": 0.50,
+      "sprout": 0.35,
+      "damage": 0.15
+    },
+    "thresholds": {
+      "sell_first_composite_risk": 10.0,
+      "sell_first_min_rot_pct": 3.0,
+      "sell_soon_composite_risk": 4.5
+    }
+  }
+}
