@@ -18,7 +18,7 @@ export default function AgmarkModal({ onClose }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <ShieldCheck size={22} color="var(--haldi-gold)" />
             <h2 style={{ fontSize: '1.35rem', color: 'var(--kanda-maroon)' }}>
-              AGMARK & NHB Onion Standards
+              AGMARK-Aligned Onion Grading
             </h2>
           </div>
           <button
@@ -30,7 +30,7 @@ export default function AgmarkModal({ onClose }) {
         </div>
 
         <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-          Grading standards formulated under the Agricultural Produce (Grading and Marking) Act, Directorate of Marketing & Inspection, Ministry of Agriculture, Govt. of India.
+         These are configurable, AGMARK-aligned prototype grading rules based on onion quality and size standards. Thresholds are intended for demonstration and calibration and should be validated against the applicable official standard.
         </p>
 
         {/* Size Classification */}
@@ -69,7 +69,7 @@ export default function AgmarkModal({ onClose }) {
         {/* Quality Classes */}
         <div style={{ marginBottom: '1.25rem' }}>
           <h3 style={{ fontSize: '0.95rem', color: 'var(--kanda-maroon)', marginBottom: '0.4rem' }}>
-            2. AGMARK Quality Tier Specifications
+            2. Configured Quality Tier Specifications
           </h3>
           <ul style={{ fontSize: '0.8rem', color: 'var(--text-muted)', listStyle: 'none', spaceY: '0.5rem' }}>
             <li style={{ marginBottom: '0.4rem' }}>
@@ -108,6 +108,15 @@ export default function AgmarkModal({ onClose }) {
           style={{ width: '100%', padding: '0.75rem' }}
         >
           Close Specifications
+          <p style={{
+  fontSize: '0.75rem',
+  color: 'var(--text-muted)',
+  marginTop: '0.75rem',
+  textAlign: 'center'
+}}>
+  Reference: Directorate of Marketing & Inspection (DMI), AGMARK — Official Onion Commodity Profile
+</p>
+           
         </button>
       </div>
     </div>

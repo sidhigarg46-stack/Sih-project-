@@ -1,7 +1,7 @@
 """
 backend/engine/grading.py
-Parses AGMARK standard grading_config.json and evaluates batch-level metrics,
-size distribution, uniformity, and assigned formal grade.
+Parses configurable onion grading rules from grading_config.json and evaluates
+batch-level metrics, size distribution, uniformity, and assigned grade.
 """
 
 import json
@@ -17,11 +17,12 @@ def load_grading_config() -> Dict[str, Any]:
 
 def evaluate_batch_grading(onions: List[Dict[str, Any]]) -> Dict[str, Any]:
     """
-    Evaluates a batch of segmented onions against AGMARK standards.
+    Evaluates a batch of segmented onions against the configured
+    onion quality and grading rules.
     """
+    
     config = load_grading_config()
     total = len(onions)
-
     if total == 0:
         return {
             "total_onions": 0,
@@ -65,8 +66,7 @@ def evaluate_batch_grading(onions: List[Dict[str, Any]]) -> Dict[str, Any]:
     rot_pct = (rot_count / total) * 100.0
     sprout_pct = (sprout_count / total) * 100.0
     damage_pct = (damage_count / total) * 100.0
-
-    # AGMARK Grade Evaluation hierarchy
+    # Grade Evaluation hierarchy based on configured rules
     specs = config.get("grade_specifications", {})
     assigned_grade = "Reject"
 

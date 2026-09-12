@@ -1,5 +1,11 @@
 {
-  "standard_name": "AGMARK & National Horticulture Board (NHB) Onion Standards",
+  "standard_name": "AGMARK-aligned Onion Quality Grading Rules",
+  "description": "Configurable prototype grading thresholds aligned with onion quality and size standards; values are intended for demonstration and calibration and should be validated against the applicable official standard.",
+  "source": {
+  "name": "Directorate of Marketing & Inspection (DMI), AGMARK",
+  "reference": "Official DMI Commodity Profile: Onion",
+  "url": "https://agmarknet.gov.in/Others/Onion.pdf"
+},
   "size_classification": {
     "grade_a_min_diameter_mm": 60.0,
     "grade_b_min_diameter_mm": 40.0,
