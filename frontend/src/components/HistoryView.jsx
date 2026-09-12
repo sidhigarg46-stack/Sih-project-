@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { History, ShieldCheck, IndianRupee, ArrowRight, RefreshCw, Layers } from 'lucide-react';
+import { History, Search, ArrowRight, RefreshCw, ShieldCheck } from 'lucide-react';
 
 export default function HistoryView({ onSelectBatch, apiBaseUrl, onBack }) {
   const [batches, setBatches] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [gradeFilter, setGradeFilter] = useState('All grades');
+  const [priorityFilter, setPriorityFilter] = useState('All actions');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -35,6 +38,19 @@ export default function HistoryView({ onSelectBatch, apiBaseUrl, onBack }) {
     }
   };
 
+  const getPriorityClass = (priority) => {
+    if (priority === 'Hold') return 'hold';
+    if (priority === 'Sell Soon') return 'sell-soon';
+    return 'sell-first';
+  };
+
+  const filteredBatches = batches.filter((batch) => {
+    const matchesSearch = batch.batch_id.toLowerCase().includes(searchTerm.toLowerCase().trim());
+    const matchesGrade = gradeFilter === 'All grades' || batch.grade === gradeFilter;
+    const matchesPriority = priorityFilter === 'All actions' || batch.sell_priority === priorityFilter;
+    return matchesSearch && matchesGrade && matchesPriority;
+  });
+
   return (
     <div style={{ maxWidth: '1080px', margin: '2rem auto', padding: '0 1rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
@@ -44,7 +60,7 @@ export default function HistoryView({ onSelectBatch, apiBaseUrl, onBack }) {
             <span>Evaluated Batch History</span>
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>
-            Historical inspection records stored locally in SQLite database.
+            Browse verified Digital Quality Passports for every inspected batch.
           </p>
         </div>
 
@@ -77,7 +93,7 @@ export default function HistoryView({ onSelectBatch, apiBaseUrl, onBack }) {
         </div>
       ) : batches.length === 0 ? (
         <div className="kanda-card" style={{ textAlign: 'center', padding: '3rem' }}>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>No batch inspections recorded yet.</p>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>No quality passports issued yet.</p>
           <button
             onClick={onBack}
             className="btn-mandi-primary"
@@ -87,68 +103,68 @@ export default function HistoryView({ onSelectBatch, apiBaseUrl, onBack }) {
           </button>
         </div>
       ) : (
-        <div style={{ display: 'grid', gap: '1rem' }}>
-          {batches.map((b) => (
-            <div
-              key={b.batch_id}
-              className="kanda-card"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '1rem',
-                cursor: 'pointer',
-                padding: '1.25rem 1.5rem'
-              }}
-              onClick={() => onSelectBatch(b.batch_id)}
-            >
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem' }}>
-                  <span style={{ fontWeight: 700, color: 'var(--kanda-maroon)', fontSize: '1.05rem' }}>
-                    Batch #{b.batch_id.slice(-6)}
-                  </span>
-                  <span className={`mandi-seal ${getGradeClass(b.grade)}`} style={{ padding: '0.2rem 0.65rem', fontSize: '0.72rem' }}>
-                    {b.grade}
-                  </span>
-                  <span className={`priority-tag ${b.sell_priority === 'Hold' ? 'hold' : b.sell_priority === 'Sell Soon' ? 'sell-soon' : 'sell-first'}`} style={{ padding: '0.2rem 0.65rem', fontSize: '0.72rem' }}>
-                    {b.sell_priority}
-                  </span>
-                </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', gap: '1.2rem' }}>
-                  <span>{new Date(b.timestamp).toLocaleString()}</span>
-                  <span>{b.total_onions} Bulbs Evaluated</span>
-                  <span>Avg Dia: {b.avg_diameter_mm}mm</span>
-                  <span>Uniformity (CV): {b.uniformity_score}%</span>
-                </div>
-              </div>
+        <>
+          <div className="history-toolbar" aria-label="Filter quality passports">
+            <label className="history-search">
+              <Search size={16} aria-hidden="true" />
+              <input
+                type="search"
+                placeholder="Search by batch ID"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                aria-label="Search by batch ID"
+              />
+            </label>
+            <select className="history-filter" value={gradeFilter} onChange={(event) => setGradeFilter(event.target.value)} aria-label="Filter by grade">
+              <option>All grades</option>
+              <option>Extra</option>
+              <option>Standard</option>
+              <option>Commercial</option>
+              <option>Reject</option>
+            </select>
+            <select className="history-filter" value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value)} aria-label="Filter by storage or sale action">
+              <option>All actions</option>
+              <option>Hold</option>
+              <option>Sell Soon</option>
+              <option>Sell First</option>
+            </select>
+          </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-                    PRICE
-                  </div>
-                  <div style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--kanda-maroon)' }}>
-                    ₹{b.recommended_price.toFixed(2)}/kg
-                  </div>
-                </div>
-
-                <div style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  background: 'var(--haldi-bg)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--haldi-gold)'
-                }}>
-                  <ArrowRight size={18} />
-                </div>
-              </div>
+          {filteredBatches.length === 0 ? (
+            <div className="kanda-card" style={{ textAlign: 'center', padding: '2.5rem' }}>
+              <p style={{ color: 'var(--text-muted)' }}>No passports match these filters.</p>
             </div>
-          ))}
-        </div>
+          ) : (
+            <div className="history-list">
+              {filteredBatches.map((b) => (
+                <article key={b.batch_id} className="history-item">
+                  <div>
+                    <div className="history-card-heading">
+                      <ShieldCheck size={17} aria-hidden="true" />
+                      <span className="history-batch-id">{b.batch_id}</span>
+                      <span className={`mandi-seal ${getGradeClass(b.grade)}`}>{b.grade}</span>
+                      <span className={`priority-tag ${getPriorityClass(b.sell_priority)}`}>{b.sell_priority}</span>
+                    </div>
+                    <div className="history-date">Issued {new Date(b.timestamp).toLocaleString()}</div>
+                    <div className="history-meta">
+                      <span>{b.total_onions} onions evaluated</span>
+                      <span>Average diameter {Number(b.avg_diameter_mm).toFixed(1)} mm</span>
+                      <span>Size CV {Number(b.uniformity_score).toFixed(1)}%</span>
+                    </div>
+                  </div>
+                  <div className="history-price">
+                    <span>Passport value</span>
+                    ₹{Number(b.recommended_price).toFixed(2)}<small>/kg</small>
+                  </div>
+                  <button className="history-view-button" type="button" onClick={() => onSelectBatch(b.batch_id)} aria-label={`View passport for ${b.batch_id}`}>
+                    <span>View passport</span>
+                    <ArrowRight size={17} />
+                  </button>
+                </article>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
