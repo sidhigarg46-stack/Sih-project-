@@ -18,10 +18,12 @@ from .defect_detector import detect_onion_defects
 def run_vision_pipeline(
     image_bytes: bytes,
     known_reference_diameter_mm: float = 27.0,
-    output_dir: Path = Path("storage")
+    output_dir: Path = Path(__file__).resolve().parent.parent / "storage",
+    conf_threshold: float = 0.2
 ) -> Dict[str, Any]:
     """
-    Executes the classical CV pipeline on raw image bytes.
+    Executes the CV pipeline on raw image bytes.
+    Uses best.onnx deep learning detector with confidence threshold 0.2.
     Returns extracted onion objects, reference data, and saves annotated image.
     """
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -47,11 +49,12 @@ def run_vision_pipeline(
         known_diameter_mm=known_reference_diameter_mm
     )
 
-    # 3. Onion Segmentation
+    # 3. Onion Segmentation (best.onnx @ conf=0.2)
     segmented_raw = segment_onions(
         image_bgr,
         pixels_per_mm=pixels_per_mm,
-        reference_circle=ref_circle
+        reference_circle=ref_circle,
+        conf_threshold=conf_threshold
     )
 
     # 4. Defect Detection & Metric Aggregation
@@ -79,6 +82,7 @@ def run_vision_pipeline(
         diameter = raw["diameter_mm"]
         circularity = raw["circularity"]
         bx, by, bw, bh = raw["bbox"]
+        conf_val = raw.get("confidence")
 
         # AGMARK Size Classification
         if diameter >= 60.0:
@@ -110,7 +114,11 @@ def run_vision_pipeline(
         cv2.rectangle(annotated, (bx, by), (bx + bw, by + bh), box_color, 2)
         
         # Tag header badge
-        tag_title = f"#{idx} {diameter:.0f}mm [{status_text}]"
+        if conf_val is not None:
+            tag_title = f"#{idx} {diameter:.0f}mm [{status_text}] {conf_val:.2f}"
+        else:
+            tag_title = f"#{idx} {diameter:.0f}mm [{status_text}]"
+
         (tw, th), _ = cv2.getTextSize(tag_title, cv2.FONT_HERSHEY_SIMPLEX, 0.45, 1)
         cv2.rectangle(annotated, (bx, max(0, by - th - 6)), (bx + tw + 6, by), box_color, -1)
         cv2.putText(annotated, tag_title, (bx + 3, max(12, by - 3)),
@@ -122,6 +130,7 @@ def run_vision_pipeline(
             "diameter_mm": diameter,
             "circularity": circularity,
             "size_class": size_class,
+            "confidence": conf_val,
             "defects": {
                 "defect_rot": has_rot,
                 "defect_sprout": has_sprout,

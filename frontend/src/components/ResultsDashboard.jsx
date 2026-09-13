@@ -548,6 +548,15 @@ export default function ResultsDashboard({
                   </strong>
                 </span>
 
+                {selectedOnion.confidence !== undefined && selectedOnion.confidence !== null && (
+                  <span>
+                    Confidence
+                    <strong>
+                      {Math.round(selectedOnion.confidence * 100)}%
+                    </strong>
+                  </span>
+                )}
+
               </div>
 
             </div>

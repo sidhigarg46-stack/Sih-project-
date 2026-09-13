@@ -72,11 +72,11 @@ KandaGuru was engineered to address the real-world operational challenges of Ind
                                      |
                                      v
 +-------------------------------------------------------------------------+
-|                  STAGE 2: ONION BULB SEGMENTATION                       |
-|  - Mask out reference coin region                                       |
-|  - Multi-channel color thresholding (Grayscale + HSV Saturation + LAB a)|
-|  - Morphological closing & opening                                      |
-|  - Distance Transform + Watershed segmentation                          |
+|             STAGE 2: ONION BULB DETECTION & SEGMENTATION                |
+|  - Deep Learning Detection: best.onnx (YOLO) with confidence >= 0.2     |
+|  - Mask out reference coin region & extract localized bulb ROIs         |
+|  - Morphological closing & elliptical prior submask generation          |
+|  - Fallback: Multi-channel thresholding (Grayscale + HSV + LAB)         |
 |  - Compute diameter_mm and circularity (4 * pi * Area / Perimeter^2)   |
 +------------------------------------+------------------------------------+
                                      |

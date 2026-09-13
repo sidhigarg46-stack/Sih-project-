@@ -143,8 +143,8 @@ async def analyze_batch(
                 INSERT INTO onions (
                     onion_id, batch_id, diameter_mm, circularity,
                     defect_rot, defect_sprout, defect_damage, size_class,
-                    bbox_x, bbox_y, bbox_w, bbox_h
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    bbox_x, bbox_y, bbox_w, bbox_h, confidence
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     o["onion_id"],
@@ -158,7 +158,8 @@ async def analyze_batch(
                     o["bbox"]["x"],
                     o["bbox"]["y"],
                     o["bbox"]["w"],
-                    o["bbox"]["h"]
+                    o["bbox"]["h"],
+                    o.get("confidence")
                 )
             )
 
@@ -181,6 +182,7 @@ async def analyze_batch(
             diameter_mm=o["diameter_mm"],
             circularity=o["circularity"],
             size_class=o["size_class"],
+            confidence=o.get("confidence"),
             defects=DefectFlags(
                 defect_rot=o["defects"]["defect_rot"],
                 defect_sprout=o["defects"]["defect_sprout"],
@@ -254,6 +256,7 @@ def get_batch_report(batch_id: str):
             "defect_sprout": bool(r["defect_sprout"]),
             "defect_damage": bool(r["defect_damage"])
         }
+        conf_val = r["confidence"] if "confidence" in r.keys() and r["confidence"] is not None else None
         onions_list.append(
             OnionResponse(
                 onion_id=r["onion_id"],
@@ -261,6 +264,7 @@ def get_batch_report(batch_id: str):
                 diameter_mm=r["diameter_mm"],
                 circularity=r["circularity"],
                 size_class=r["size_class"],
+                confidence=conf_val,
                 defects=DefectFlags(**defects_dict),
                 bbox=BoundingBox(x=r["bbox_x"], y=r["bbox_y"], w=r["bbox_w"], h=r["bbox_h"])
             )
