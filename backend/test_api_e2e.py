@@ -5,9 +5,11 @@ Tests FastAPI endpoints: /batches/analyze and /batches/{batch_id}/report.
 
 from fastapi.testclient import TestClient
 from backend.main import app
+from backend.database import init_db
 from backend.test_pipeline_e2e import create_synthetic_test_image
 import io
 
+init_db()
 client = TestClient(app)
 
 def test_api():

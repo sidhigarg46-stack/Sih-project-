@@ -32,7 +32,7 @@
 
 KandaGuru was engineered to address the real-world operational challenges of Indian Agricultural Produce Market Committees (APMC Mandis) and rural cold storage warehouses:
 1. **100% Local & Offline**: Operates completely without internet connectivity, cloud APIs, external paid services, or Docker containers.
-2. **Deterministic Classical Computer Vision**: Relies strictly on `cv2` image processing (no opaque deep learning black boxes or GPU requirements).
+2. **Hybrid Edge Vision (Lightweight DL + Classical CV)**: Combines edge-optimized ONNX models (YOLO bulb detection via `best.onnx` + MobileNetV2 defect classification via `onion_classifier.onnx`) running locally on CPU via ONNX Runtime with deterministic classical CV (contour geometry and convexity defect analysis), requiring zero cloud APIs or dedicated GPUs.
 3. **Transparent Mathematical Valuation**: Every rupee deducted from the mandi price is fully explained with itemized formulas.
 4. **Culturally Rooted Aesthetics**: Embedded with authentic Indian agricultural motifs (Warli accents, Jali dividers, Rangoli quality stamps, and Rupee `₹` typography).
 
@@ -43,9 +43,8 @@ KandaGuru was engineered to address the real-world operational challenges of Ind
 - **Standard Coin Metric Calibration**: Detects an Indian coin (standard ₹5 coin = 23.0 mm or ₹10 coin = 27.0 mm) positioned in the viewfinder guide to calculate real-world physical scale (`pixels_per_mm`).
 - **Contour & Watershed Segmentation**: Separates touching onion bulbs and extracts contour area, perimeter, equivalent diameter, and circularity.
 - **Three-Defect Screening Engine**:
-  - **Necrotic Rot**: Dark blackish/charcoal mould detected via low-value HSV thresholding.
-  - **Sprouting**: Active vegetative shoot emergence detected via chlorophyll-green HSV thresholding.
-  - **Mechanical Damage**: Inward cuts, gouges, or slicing detected using contour convexity defects (`cv2.convexityDefects`).
+  - **Necrotic Rot & Sprouting**: Deep learning classification via MobileNetV2 (`onion_classifier.onnx`) running on individual bulb crops.
+  - **Mechanical Damage**: Inward cuts, gouges, or slicing detected using classical contour convexity defects (`cv2.convexityDefects`).
 - **AGMARK & NHB Grade Classifier**: Maps batch statistics against official Indian standards into **Extra**, **Standard**, **Commercial**, or **Reject**.
 - **Transparent Penalty Pricing Model**: Adjusts baseline mandi rates with uniformity bonuses and proportional defect penalties.
 - **Risk-Weighted Sell Priority**: Recommends **Hold**, **Sell Soon**, or **Sell First** to prevent spoilage in warehouses.
@@ -82,10 +81,10 @@ KandaGuru was engineered to address the real-world operational challenges of Ind
                                      |
                                      v
 +-------------------------------------------------------------------------+
-|                  STAGE 3: CLASSICAL DEFECT SCREENING                    |
-|  - Rot Mask: HSV Value (V < 45) inside bulb mask                        |
-|  - Sprout Mask: HSV Green (H: 30-88, S > 40, V > 35)                    |
-|  - Damage: Convexity Defect depth >= 3.2mm (excluding sprout junctions) |
+|              STAGE 3: DEEP LEARNING & CV DEFECT SCREENING               |
+|  - Deep Learning Classification: onion_classifier.onnx (MobileNetV2)    |
+|    predicts healthy / rot / sprout per onion crop                       |
+|  - Damage: Convexity Defect depth >= 3.2mm (classical contour analysis) |
 +------------------------------------+------------------------------------+
                                      |
                                      v
@@ -329,7 +328,7 @@ Returns the list of recently evaluated batches for history browsing.
 
 1. Open a second terminal and navigate to the `frontend` directory:
    ```bash
-   cd onion/frontend
+   cd frontend
    ```
 
 2. Install dependencies:

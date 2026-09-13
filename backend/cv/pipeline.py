@@ -131,6 +131,8 @@ def run_vision_pipeline(
             "circularity": circularity,
             "size_class": size_class,
             "confidence": conf_val,
+            "classifier_confidence": defects.get("classifier_confidence"),
+            "classifier_class": defects.get("classifier_class"),
             "defects": {
                 "defect_rot": has_rot,
                 "defect_sprout": has_sprout,

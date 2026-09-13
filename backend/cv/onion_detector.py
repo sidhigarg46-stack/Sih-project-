@@ -25,9 +25,10 @@ def get_model_path() -> Path:
             return custom_path
 
     candidates = [
-        Path(__file__).resolve().parent.parent.parent / "best.onnx",  # Workspace root
-        Path(__file__).resolve().parent.parent / "best.onnx",         # backend/best.onnx
-        Path.cwd() / "best.onnx",                                     # Current working directory
+        Path(__file__).resolve().parent.parent / "models" / "best.onnx",  # backend/models/best.onnx
+        Path(__file__).resolve().parent.parent.parent / "best.onnx",       # Workspace root
+        Path(__file__).resolve().parent.parent / "best.onnx",              # backend/best.onnx
+        Path.cwd() / "best.onnx",                                          # Current working directory
     ]
 
     for candidate in candidates:

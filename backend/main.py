@@ -24,6 +24,8 @@ from .models import (
     DefectFlags
 )
 from .cv.pipeline import run_vision_pipeline
+from .cv.onion_detector import get_onion_model
+from .cv.defect_classifier import get_classifier_session
 from .engine.grading import evaluate_batch_grading
 from .engine.pricing import calculate_pricing_and_priority
 from .utils import get_lan_ip, generate_qr_code_base64
@@ -50,8 +52,10 @@ app.mount("/storage", StaticFiles(directory=str(STORAGE_DIR)), name="storage")
 
 @app.on_event("startup")
 def startup_event():
-    """Initialize database tables on server start."""
+    """Initialize database tables and preload deep learning models on server start."""
     init_db()
+    get_onion_model()
+    get_classifier_session()
 
 @app.get("/")
 def read_root():
@@ -143,8 +147,8 @@ async def analyze_batch(
                 INSERT INTO onions (
                     onion_id, batch_id, diameter_mm, circularity,
                     defect_rot, defect_sprout, defect_damage, size_class,
-                    bbox_x, bbox_y, bbox_w, bbox_h, confidence
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    bbox_x, bbox_y, bbox_w, bbox_h, confidence, classifier_confidence
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     o["onion_id"],
@@ -159,7 +163,8 @@ async def analyze_batch(
                     o["bbox"]["y"],
                     o["bbox"]["w"],
                     o["bbox"]["h"],
-                    o.get("confidence")
+                    o.get("confidence"),
+                    o.get("classifier_confidence")
                 )
             )
 
@@ -183,6 +188,7 @@ async def analyze_batch(
             circularity=o["circularity"],
             size_class=o["size_class"],
             confidence=o.get("confidence"),
+            classifier_confidence=o.get("classifier_confidence"),
             defects=DefectFlags(
                 defect_rot=o["defects"]["defect_rot"],
                 defect_sprout=o["defects"]["defect_sprout"],
@@ -257,6 +263,7 @@ def get_batch_report(batch_id: str):
             "defect_damage": bool(r["defect_damage"])
         }
         conf_val = r["confidence"] if "confidence" in r.keys() and r["confidence"] is not None else None
+        clf_conf = r["classifier_confidence"] if "classifier_confidence" in r.keys() and r["classifier_confidence"] is not None else None
         onions_list.append(
             OnionResponse(
                 onion_id=r["onion_id"],
@@ -265,6 +272,7 @@ def get_batch_report(batch_id: str):
                 circularity=r["circularity"],
                 size_class=r["size_class"],
                 confidence=conf_val,
+                classifier_confidence=clf_conf,
                 defects=DefectFlags(**defects_dict),
                 bbox=BoundingBox(x=r["bbox_x"], y=r["bbox_y"], w=r["bbox_w"], h=r["bbox_h"])
             )
