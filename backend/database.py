@@ -47,6 +47,8 @@ CREATE TABLE IF NOT EXISTS onions (
     bbox_y INTEGER NOT NULL DEFAULT 0,       -- Bounding box Y coordinate (pixels)
     bbox_w INTEGER NOT NULL DEFAULT 0,       -- Bounding box Width (pixels)
     bbox_h INTEGER NOT NULL DEFAULT 0,       -- Bounding box Height (pixels)
+    confidence REAL DEFAULT 1.0,             -- YOLO detection confidence score
+    classifier_confidence REAL DEFAULT NULL, -- MobileNetV2 defect classifier confidence score
     FOREIGN KEY (batch_id) REFERENCES batches (batch_id) ON DELETE CASCADE
 );
 
@@ -72,7 +74,18 @@ def init_db(db_path: Path = DB_PATH) -> None:
     with sqlite3.connect(db_path) as conn:
         conn.execute("PRAGMA foreign_keys = ON;")
         conn.executescript(CREATE_TABLES_SQL)
-        conn.commit()
+        # Migration: ensure confidence column exists in existing databases
+        try:
+            conn.execute("ALTER TABLE onions ADD COLUMN confidence REAL DEFAULT 1.0;")
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass
+        # Migration: ensure classifier_confidence column exists in existing databases
+        try:
+            conn.execute("ALTER TABLE onions ADD COLUMN classifier_confidence REAL DEFAULT NULL;")
+            conn.commit()
+        except sqlite3.OperationalError:
+            pass
 
 @contextmanager
 def get_db_connection(db_path: Path = DB_PATH) -> Generator[sqlite3.Connection, None, None]:

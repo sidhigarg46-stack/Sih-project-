@@ -17,8 +17,25 @@ from backend.cv.pipeline import run_vision_pipeline
 from backend.engine.grading import evaluate_batch_grading
 from backend.engine.pricing import calculate_pricing_and_priority
 
+from backend.cv.defect_classifier import get_classifier_session, classify_onion
+
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
+
+def test_classifier_unit():
+    print("Testing MobileNetV2 classifier loading...")
+    session = get_classifier_session()
+    assert session is not None, "Failed to load MobileNetV2 classifier session"
+    print(" - Classifier session loaded successfully.")
+
+    # Test with healthy onion color crop
+    healthy_crop = np.full((150, 150, 3), (65, 45, 165), dtype=np.uint8)
+    res = classify_onion(healthy_crop)
+    print(f" - Crop classification result: {res}")
+    assert "predicted_class" in res, "Missing predicted_class in classifier response"
+    assert "confidence" in res, "Missing confidence in classifier response"
+    assert 0.0 <= res["confidence"] <= 1.0, f"Invalid confidence score: {res['confidence']}"
+    print(" - Classifier unit test passed!\n")
 
 def create_synthetic_test_image() -> bytes:
     # 1200 x 800 light warm parchment background
@@ -41,7 +58,7 @@ def create_synthetic_test_image() -> bytes:
     # 3. Onion #2 with Rot (Dark necrosis patch): Center (800, 300), radius 95 px
     cv2.circle(canvas, (800, 300), 95, onion_color, -1)
     cv2.circle(canvas, (800, 300), 95, onion_border, 2)
-    # Dark necrotic spot (V < 40 in HSV)
+    # Dark necrotic spot
     cv2.circle(canvas, (820, 280), 28, (15, 15, 20), -1)
 
     # 4. Onion #3 with Sprout (Green shoot): Center (450, 650), radius 90 px
@@ -52,7 +69,6 @@ def create_synthetic_test_image() -> bytes:
     cv2.fillPoly(canvas, [pts_sprout], (30, 190, 40))
 
     # 5. Onion #4 with Mechanical Damage (Cut / Notch): Center (800, 650), radius 90 px
-    # We draw an onion polygon with a deep inward V-cut notch
     center = (800, 650)
     radius = 90
     poly_pts = []
@@ -73,6 +89,10 @@ def create_synthetic_test_image() -> bytes:
     return encoded.tobytes()
 
 if __name__ == "__main__":
+    # 1. Run classifier unit test
+    test_classifier_unit()
+
+    # 2. Run full CV pipeline
     print("Generating synthetic test batch...")
     img_bytes = create_synthetic_test_image()
     
@@ -82,8 +102,17 @@ if __name__ == "__main__":
     
     print(f"Calibration: {res['calibration']}")
     print(f"Isolated Onions: {len(res['onions'])}")
+    assert len(res["onions"]) > 0, "Expected at least 1 onion detected in synthetic batch"
+
+    # Verify Healthy Onion #1 produces defect_rot=False and defect_sprout=False
+    onion_1 = res["onions"][0]
+    print(f"Onion #1 evaluation: {onion_1['defects']}, clf_class={onion_1.get('classifier_class')}, clf_conf={onion_1.get('classifier_confidence')}")
+    assert onion_1["defects"]["defect_rot"] is False, "Healthy Onion #1 should not have defect_rot=True"
+    assert onion_1["defects"]["defect_sprout"] is False, "Healthy Onion #1 should not have defect_sprout=True"
+    assert onion_1.get("classifier_confidence") is not None, "classifier_confidence should be attached"
+
     for o in res["onions"]:
-        print(f" - Onion #{o['index']}: Diameter={o['diameter_mm']}mm, Circularity={o['circularity']:.2f}, Defects={o['defects']}")
+        print(f" - Onion #{o['index']}: Diameter={o['diameter_mm']}mm, Circularity={o['circularity']:.2f}, Defects={o['defects']}, ClfConf={o.get('classifier_confidence')}")
         
     print("\nEvaluating AGMARK grading...")
     grading = evaluate_batch_grading(res["onions"])
@@ -95,3 +124,5 @@ if __name__ == "__main__":
     print(f"Formula: {eval_res['price_breakdown']['formula_expression']}")
     print(f"Priority: {eval_res['priority_breakdown']['priority']}")
     print(f"Reasoning: {eval_res['priority_breakdown']['decision_reasoning']}")
+
+    print("\nPIPELINE E2E TEST PASSED!")

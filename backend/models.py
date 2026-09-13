@@ -55,6 +55,8 @@ class OnionBase(BaseModel):
     size_class: SizeClass = Field(..., description="Categorized size class according to AGMARK/NHB")
     defects: DefectFlags = Field(..., description="Defect detection boolean flags")
     bbox: BoundingBox = Field(..., description="Bounding box location in original image")
+    confidence: Optional[float] = Field(None, description="YOLO detection confidence score (>= 0.2)")
+    classifier_confidence: Optional[float] = Field(None, description="MobileNetV2 defect classifier confidence score")
 
 class OnionCreate(OnionBase):
     onion_id: str = Field(..., description="Unique UUID for the segmented onion")
