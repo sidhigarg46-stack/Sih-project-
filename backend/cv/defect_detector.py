@@ -34,9 +34,10 @@ def detect_onion_defects(
     hsv = cv2.cvtColor(onion_bgr, cv2.COLOR_BGR2HSV)
 
     # 1. Rot Detection (Dark necrosis / black mould)
-    # Characterized by low Value/Brightness (V < 55) within the onion area
+    # Characterized by very low Value/Brightness (V < 45) within the onion area.
+    # A higher cutoff incorrectly treats normal brown skin and root shadows as rot.
     rot_lower = np.array([0, 0, 0], dtype=np.uint8)
-    rot_upper = np.array([180, 255, 55], dtype=np.uint8)
+    rot_upper = np.array([180, 255, 45], dtype=np.uint8)
     
     raw_rot_mask = cv2.inRange(hsv, rot_lower, rot_upper)
     valid_rot_mask = cv2.bitwise_and(raw_rot_mask, raw_rot_mask, mask=onion_submask)

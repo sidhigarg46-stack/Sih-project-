@@ -83,7 +83,7 @@ KandaGuru was engineered to address the real-world operational challenges of Ind
                                      v
 +-------------------------------------------------------------------------+
 |                  STAGE 3: CLASSICAL DEFECT SCREENING                    |
-|  - Rot Mask: HSV Value (V < 55) inside bulb mask                        |
+|  - Rot Mask: HSV Value (V < 45) inside bulb mask                        |
 |  - Sprout Mask: HSV Green (H: 30-88, S > 40, V > 35)                    |
 |  - Damage: Convexity Defect depth >= 3.2mm (excluding sprout junctions) |
 +------------------------------------+------------------------------------+
