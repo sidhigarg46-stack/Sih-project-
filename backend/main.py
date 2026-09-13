@@ -31,7 +31,7 @@ from .engine.pricing import calculate_pricing_and_priority
 from .utils import get_lan_ip, generate_qr_code_base64
 
 app = FastAPI(
-    title="KandaGuru - Local Onion Quality Grading System",
+    title="OnionIQ - Local Onion Quality Grading System",
     description="Local-only classical CV and AGMARK grading MVP for onions with transparent pricing and sell-priority.",
     version="1.0.0"
 )

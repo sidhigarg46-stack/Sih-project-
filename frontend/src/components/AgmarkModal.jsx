@@ -1,123 +1,134 @@
 import React from 'react';
-import { X, ShieldCheck, Scale, CheckCircle2 } from 'lucide-react';
+import { X } from 'lucide-react';
+import logoImg from '../assets/logo.jpeg';
 
 export default function AgmarkModal({ onClose }) {
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'rgba(28, 25, 23, 0.75)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 100,
-      padding: '1rem'
-    }}>
-      <div className="kanda-card" style={{ maxWidth: '640px', width: '100%', maxHeight: '90vh', overflowY: 'auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <ShieldCheck size={22} color="var(--haldi-gold)" />
-            <h2 style={{ fontSize: '1.35rem', color: 'var(--kanda-maroon)' }}>
-              AGMARK-Aligned Onion Grading
-            </h2>
+    <div
+      className="agmark-modal-overlay"
+      onClick={onClose}
+    >
+      <div
+        className="agmark-modal-card bottom-sheet-card"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sheet-drag-handle" />
+
+        <div className="sheet-header">
+          <div className="sheet-header-brand">
+            <img src={logoImg} alt="OnionIQ Logo" className="modal-logo-img" />
+            <div>
+              <h2>AGMARK Onion Grading Rules</h2>
+              <span className="sheet-sub">कांदा गुणवत्ता व प्रतवारी निकष</span>
+            </div>
           </div>
+
           <button
             onClick={onClose}
-            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
+            className="modal-close-btn"
+            aria-label="Close specifications"
+            type="button"
           >
             <X size={22} />
           </button>
         </div>
 
-        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-         These are configurable, AGMARK-aligned prototype grading rules based on onion quality and size standards. Thresholds are intended for demonstration and calibration and should be validated against the applicable official standard.
+        <p className="modal-intro">
+          Official prototype grading rules aligned with AGMARK / Directorate of Marketing & Inspection (DMI) standards for round onions.
         </p>
 
-        {/* Size Classification */}
-        <div style={{ marginBottom: '1.25rem' }}>
-          <h3 style={{ fontSize: '0.95rem', color: 'var(--kanda-maroon)', marginBottom: '0.4rem' }}>
+        <div className="modal-section">
+          <h3>
             1. Size Classification (Diameter in mm)
           </h3>
-          <table style={{ width: '100%', fontSize: '0.8rem', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
-                <th style={{ padding: '0.4rem', textAlign: 'left' }}>Grade Size</th>
-                <th style={{ padding: '0.4rem', textAlign: 'left' }}>Diameter Bracket</th>
-                <th style={{ padding: '0.4rem', textAlign: 'left' }}>Market Utility</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
-                <td style={{ padding: '0.4rem', fontWeight: 600 }}>Grade A (Large)</td>
-                <td style={{ padding: '0.4rem' }}>&gt; 60 mm</td>
-                <td style={{ padding: '0.4rem' }}>Export & Hotel / Restaurant demand</td>
-              </tr>
-              <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
-                <td style={{ padding: '0.4rem', fontWeight: 600 }}>Grade B (Medium)</td>
-                <td style={{ padding: '0.4rem' }}>40 mm – 60 mm</td>
-                <td style={{ padding: '0.4rem' }}>Household retail standard</td>
-              </tr>
-              <tr>
-                <td style={{ padding: '0.4rem', fontWeight: 600 }}>URS (Under-sized)</td>
-                <td style={{ padding: '0.4rem' }}>&lt; 40 mm</td>
-                <td style={{ padding: '0.4rem' }}>Dehydration, processing or discount</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="specs-table-wrapper">
+            <table className="specs-table">
+              <thead>
+                <tr>
+                  <th>Grade Size</th>
+                  <th>Diameter</th>
+                  <th>Utility & Demand</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Grade A (Large)</strong></td>
+                  <td>&gt; 60 mm</td>
+                  <td>Export, Hotels, Premium retail</td>
+                </tr>
+                <tr>
+                  <td><strong>Grade B (Medium)</strong></td>
+                  <td>40 mm – 60 mm</td>
+                  <td>Household standard daily cooking</td>
+                </tr>
+                <tr>
+                  <td><strong>URS (Under-sized)</strong></td>
+                  <td>&lt; 40 mm</td>
+                  <td>Dehydration, paste, processing discount</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        {/* Quality Classes */}
-        <div style={{ marginBottom: '1.25rem' }}>
-          <h3 style={{ fontSize: '0.95rem', color: 'var(--kanda-maroon)', marginBottom: '0.4rem' }}>
+        <div className="modal-section">
+          <h3>
             2. Configured Quality Tier Specifications
           </h3>
-          <ul style={{ fontSize: '0.8rem', color: 'var(--text-muted)', listStyle: 'none', spaceY: '0.5rem' }}>
-            <li style={{ marginBottom: '0.4rem' }}>
-              <strong>Extra Class:</strong> Superior quality; characteristic bulb shape and color; 0% rot, 0% sprout, max 3% minor surface cuts, min 50% Grade A size, min 0.85 circularity.
-            </li>
-            <li style={{ marginBottom: '0.4rem' }}>
-              <strong>Standard Class:</strong> Good marketable commercial quality; max 2% rot, max 3% sprout, max 8% mechanical cuts, min 0.75 circularity.
-            </li>
-            <li style={{ marginBottom: '0.4rem' }}>
-              <strong>Commercial Class:</strong> Acceptable mandi quality; max 5% rot, max 8% sprout, max 15% mechanical cuts.
+          <ul className="tier-list">
+            <li>
+              <span className="tier-badge extra">Extra Class</span>
+              <p>Superior quality; characteristic bulb shape and color; 0% rot, 0% sprout, max 3% minor surface cuts, min 50% Grade A size, min 0.85 circularity.</p>
             </li>
             <li>
-              <strong>Reject:</strong> Lots with defects exceeding 5% rot or 8% sprout; unfit for standard commercial storage.
+              <span className="tier-badge standard">Standard Class</span>
+              <p>Good marketable commercial quality; max 2% rot, max 3% sprout, max 8% mechanical cuts, min 0.75 circularity.</p>
+            </li>
+            <li>
+              <span className="tier-badge commercial">Commercial Class</span>
+              <p>Acceptable mandi quality; max 5% rot, max 8% sprout, max 15% mechanical cuts.</p>
+            </li>
+            <li>
+              <span className="tier-badge reject">Reject</span>
+              <p>Lots with defects exceeding 5% rot or 8% sprout; unfit for commercial storage.</p>
             </li>
           </ul>
         </div>
 
-        {/* Sell Priority Formula */}
-        <div style={{ background: '#FFFDF9', padding: '0.85rem', borderRadius: '6px', border: '1px solid var(--haldi-gold)', marginBottom: '1.25rem' }}>
-          <h4 style={{ fontSize: '0.85rem', color: 'var(--kanda-maroon)', marginBottom: '0.3rem' }}>
-            3. Sell-Priority Risk Formula
+        <div className="modal-section formula-section">
+          <h4>
+            3. Sell-Priority Risk Index Formula
           </h4>
-          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+          <p className="formula-code">
             <code>Risk Score = (0.50 × Rot%) + (0.35 × Sprout%) + (0.15 × Damage%)</code>
           </p>
-          <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-            • <strong>Sell First:</strong> Risk &gt;= 10.0 or Rot &gt;= 3.0% (immediate fungal spread danger)<br/>
-            • <strong>Sell Soon:</strong> Risk &gt;= 4.5 or Sprout &gt;= 5.0% (internal sprouting underway)<br/>
-            • <strong>Hold:</strong> Risk &lt; 4.5 (sound dormancy; safe for warehouse holding)
-          </p>
+          <div className="priority-rules-grid">
+            <div>
+              <strong>Sell First (तुरंत बेचें):</strong>
+              <span>Risk &ge; 10.0 or Rot &ge; 3.0% (immediate fungal decay risk)</span>
+            </div>
+            <div>
+              <strong>Sell Soon (शीघ्र बेचें):</strong>
+              <span>Risk &ge; 4.5 or Sprout &ge; 5.0% (internal sprouting underway)</span>
+            </div>
+            <div>
+              <strong>Hold (भंडारण सुरक्षित):</strong>
+              <span>Risk &lt; 4.5 (sound dormancy; safe for warehouse holding)</span>
+            </div>
+          </div>
         </div>
 
         <button
-          className="btn-mandi-primary"
+          className="btn-mandi-primary modal-close-action"
           onClick={onClose}
-          style={{ width: '100%', padding: '0.75rem' }}
+          type="button"
         >
-          Close Specifications
-          <p style={{
-  fontSize: '0.75rem',
-  color: 'var(--text-muted)',
-  marginTop: '0.75rem',
-  textAlign: 'center'
-}}>
-  Reference: Directorate of Marketing & Inspection (DMI), AGMARK — Official Onion Commodity Profile
-</p>
-           
+          Close Specifications / बंद करें
         </button>
+
+        <p className="modal-footer-cite">
+          Reference: Directorate of Marketing & Inspection (DMI), AGMARK — Official Onion Commodity Profile
+        </p>
       </div>
     </div>
   );

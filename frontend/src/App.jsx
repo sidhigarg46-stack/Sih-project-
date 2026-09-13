@@ -5,6 +5,7 @@ import ResultsDashboard from './components/ResultsDashboard';
 import HistoryView from './components/HistoryView';
 import AgmarkModal from './components/AgmarkModal';
 import DigitalQualityPassport from './components/DigitalQualityPassport';
+import logoImg from './assets/logo.jpeg';
 
 export default function App() {
   const [currentView, setCurrentView] = useState('upload');
@@ -14,15 +15,9 @@ export default function App() {
   const [reportError, setReportError] = useState('');
   const [passportMode, setPassportMode] = useState(false);
 
-  // Backend runs on the same machine / LAN host as the frontend
   const hostname = window.location.hostname || 'localhost';
   const apiBaseUrl = `http://${hostname}:8000`;
 
-  // ------------------------------------------------------------
-  // Detect QR / Digital Quality Passport URL
-  // Example:
-  // http://192.168.1.5:5173/report/BATCH_123
-  // ------------------------------------------------------------
   useEffect(() => {
     const checkReportUrl = async () => {
       const path = window.location.pathname;
@@ -31,13 +26,9 @@ export default function App() {
       let batchIdToLoad = null;
 
       if (path.includes('/report/')) {
-        batchIdToLoad = path
-          .split('/report/')[1]
-          ?.replace(/\/$/, '');
+        batchIdToLoad = path.split('/report/')[1]?.replace(/\/$/, '');
       } else if (hash.includes('/report/')) {
-        batchIdToLoad = hash
-          .split('/report/')[1]
-          ?.replace(/\/$/, '');
+        batchIdToLoad = hash.split('/report/')[1]?.replace(/\/$/, '');
       }
 
       if (!batchIdToLoad) return;
@@ -46,26 +37,17 @@ export default function App() {
       setReportError('');
 
       try {
-        const res = await fetch(
-          `${apiBaseUrl}/batches/${batchIdToLoad}/report`
-        );
-
+        const res = await fetch(`${apiBaseUrl}/batches/${batchIdToLoad}/report`);
         if (!res.ok) {
           throw new Error('Report not found');
         }
 
         const data = await res.json();
-
         setAnalysisData(data);
-
-        // QR links open directly in Digital Quality Passport mode
         setPassportMode(true);
-
       } catch (err) {
         console.error(err);
-        setReportError(
-          `Could not load report for batch "${batchIdToLoad}".`
-        );
+        setReportError(`Could not load report for batch "${batchIdToLoad}".`);
       } finally {
         setLoadingReport(false);
       }
@@ -74,28 +56,20 @@ export default function App() {
     checkReportUrl();
   }, [apiBaseUrl]);
 
-  // ------------------------------------------------------------
-  // Select a batch from History
-  // ------------------------------------------------------------
   const handleSelectBatchFromHistory = async (batchId) => {
     setLoadingReport(true);
     setReportError('');
     setPassportMode(false);
 
     try {
-      const res = await fetch(
-        `${apiBaseUrl}/batches/${batchId}/report`
-      );
-
+      const res = await fetch(`${apiBaseUrl}/batches/${batchId}/report`);
       if (!res.ok) {
         throw new Error('Report not found');
       }
 
       const data = await res.json();
-
       setAnalysisData(data);
       setCurrentView('results');
-
     } catch (err) {
       console.error(err);
       alert('Failed to load batch report.');
@@ -104,21 +78,14 @@ export default function App() {
     }
   };
 
-  // ------------------------------------------------------------
-  // New inspection
-  // ------------------------------------------------------------
   const handleNewScan = () => {
     setAnalysisData(null);
     setPassportMode(false);
     setReportError('');
     setCurrentView('upload');
-
     window.history.pushState({}, '', '/');
   };
 
-  // ------------------------------------------------------------
-  // If opened through QR code → show passport directly
-  // ------------------------------------------------------------
   if (passportMode && analysisData) {
     return (
       <DigitalQualityPassport
@@ -127,7 +94,6 @@ export default function App() {
           setPassportMode(false);
           setAnalysisData(null);
           setCurrentView('upload');
-
           window.history.pushState({}, '', '/');
         }}
       />
@@ -135,13 +101,7 @@ export default function App() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column'
-      }}
-    >
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Header
         currentView={currentView}
         setCurrentView={(view) => {
@@ -151,24 +111,9 @@ export default function App() {
         onShowSpecs={() => setShowSpecs(true)}
       />
 
-      <main
-        style={{
-          flex: 1,
-          paddingBottom: '3rem'
-        }}
-      >
-
-        {/* -------------------------------------------------- */}
-        {/* Loading */}
-        {/* -------------------------------------------------- */}
-
+      <main className="main-content-app" style={{ flex: 1 }}>
         {loadingReport ? (
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '5rem 1rem'
-            }}
-          >
+          <div style={{ textAlign: 'center', padding: '5rem 1rem' }}>
             <div
               style={{
                 width: '40px',
@@ -180,68 +125,31 @@ export default function App() {
                 animation: 'spin 1s linear infinite'
               }}
             />
-
             <style>
               {`
                 @keyframes spin {
-                  0% {
-                    transform: rotate(0deg);
-                  }
-
-                  100% {
-                    transform: rotate(360deg);
-                  }
+                  0% { transform: rotate(0deg); }
+                  100% { transform: rotate(360deg); }
                 }
               `}
             </style>
-
-            <p
-              style={{
-                color: 'var(--kanda-maroon)',
-                fontWeight: 600
-              }}
-            >
+            <p style={{ color: 'var(--kanda-maroon)', fontWeight: 600 }}>
               Loading Digital Quality Passport...
             </p>
           </div>
-
         ) : reportError ? (
-
-          /* -------------------------------------------------- */
-          /* Report Error */
-          /* -------------------------------------------------- */
-
           <div
             className="kanda-card"
-            style={{
-              maxWidth: '600px',
-              margin: '3rem auto',
-              textAlign: 'center'
-            }}
+            style={{ maxWidth: '600px', margin: '3rem auto', textAlign: 'center' }}
           >
-            <p
-              style={{
-                color: '#DC2626',
-                marginBottom: '1rem'
-              }}
-            >
+            <p style={{ color: '#DC2626', marginBottom: '1rem' }}>
               {reportError}
             </p>
-
-            <button
-              className="btn-mandi-primary"
-              onClick={handleNewScan}
-            >
+            <button className="btn-mandi-primary" onClick={handleNewScan}>
               Back to Inspection
             </button>
           </div>
-
         ) : currentView === 'upload' ? (
-
-          /* -------------------------------------------------- */
-          /* Upload / Inspection */
-          /* -------------------------------------------------- */
-
           <UploadSection
             apiBaseUrl={apiBaseUrl}
             onAnalysisComplete={(data) => {
@@ -250,39 +158,19 @@ export default function App() {
               setCurrentView('results');
             }}
           />
-
         ) : currentView === 'results' && analysisData ? (
-
-          /* -------------------------------------------------- */
-          /* Results Dashboard */
-          /* -------------------------------------------------- */
-
           <ResultsDashboard
             data={analysisData}
             apiBaseUrl={apiBaseUrl}
             onNewScan={handleNewScan}
           />
-
         ) : currentView === 'history' ? (
-
-          /* -------------------------------------------------- */
-          /* Batch History */
-          /* -------------------------------------------------- */
-
           <HistoryView
             apiBaseUrl={apiBaseUrl}
             onSelectBatch={handleSelectBatchFromHistory}
-            onBack={() => {
-              setCurrentView('upload');
-            }}
+            onBack={() => setCurrentView('upload')}
           />
-
         ) : (
-
-          /* -------------------------------------------------- */
-          /* Fallback */
-          /* -------------------------------------------------- */
-
           <UploadSection
             apiBaseUrl={apiBaseUrl}
             onAnalysisComplete={(data) => {
@@ -292,23 +180,9 @@ export default function App() {
             }}
           />
         )}
-
       </main>
 
-      {/* ------------------------------------------------------ */}
-      {/* Footer */}
-      {/* ------------------------------------------------------ */}
-
-      <footer
-        style={{
-          background: '#FAF7F2',
-          borderTop: '1px solid rgba(139, 30, 63, 0.12)',
-          padding: '1.25rem',
-          textAlign: 'center',
-          fontSize: '0.8rem',
-          color: 'var(--text-muted)'
-        }}
-      >
+      <footer className="kanda-footer">
         <div
           style={{
             maxWidth: '1280px',
@@ -317,36 +191,33 @@ export default function App() {
             justifyContent: 'space-between',
             alignItems: 'center',
             flexWrap: 'wrap',
-            gap: '0.5rem'
+            gap: '0.75rem'
           }}
         >
-
-          <div>
-            <strong>KandaGuru (कांदा गुरु)</strong>
-            {' '}— AI-assisted onion quality grading & transparent mandi valuation.
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <img src={logoImg} alt="OnionIQ Logo" style={{ height: '24px', width: 'auto', borderRadius: '4px' }} />
+            <div>
+              <strong>OnionIQ</strong>
+              {' '}— AI-assisted onion quality grading & mandi valuation.
+            </div>
           </div>
 
           <div
             style={{
               display: 'flex',
               gap: '1rem',
-              color: 'var(--text-light)'
+              color: 'var(--text-light)',
+              fontSize: '0.75rem'
             }}
           >
             <span>Local Offline Mode</span>
-            <span>AGMARK / NHB Standard</span>
+            <span>AGMARK Standard</span>
             <span>SQLite Local DB</span>
           </div>
-
         </div>
       </footer>
 
-      {/* AGMARK specifications modal */}
-      {showSpecs && (
-        <AgmarkModal
-          onClose={() => setShowSpecs(false)}
-        />
-      )}
+      {showSpecs && <AgmarkModal onClose={() => setShowSpecs(false)} />}
     </div>
   );
 }

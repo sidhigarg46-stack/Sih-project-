@@ -7,11 +7,13 @@ import {
   AlertCircle,
   Sparkles,
   CheckCircle2,
-  Image as ImageIcon,
   Ruler,
   ScanLine,
   ArrowRight,
+  Plus,
+  Minus
 } from 'lucide-react';
+import logoImg from '../assets/logo.jpeg';
 
 export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -131,7 +133,6 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
     }
   };
 
-  // Synthetic demo batch
   const handleLoadDemoSample = async () => {
     setIsAnalyzing(true);
     setErrorMsg('');
@@ -147,11 +148,9 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
 
       const ctx = canvas.getContext('2d');
 
-      // Background
       ctx.fillStyle = '#EBF0F5';
       ctx.fillRect(0, 0, 1200, 900);
 
-      // Reference coin
       ctx.beginPath();
       ctx.arc(150, 150, 46, 0, Math.PI * 2);
       ctx.fillStyle = '#D4AF37';
@@ -165,7 +164,6 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
       ctx.font = 'bold 16px sans-serif';
       ctx.fillText('₹10 COIN', 114, 155);
 
-      // Healthy onion
       ctx.beginPath();
       ctx.arc(450, 300, 100, 0, Math.PI * 2);
       ctx.fillStyle = '#A52D50';
@@ -175,7 +173,6 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
       ctx.lineWidth = 4;
       ctx.stroke();
 
-      // Rot onion
       ctx.beginPath();
       ctx.arc(800, 300, 95, 0, Math.PI * 2);
       ctx.fillStyle = '#A52D50';
@@ -185,13 +182,11 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
       ctx.lineWidth = 4;
       ctx.stroke();
 
-      // Rot spot
       ctx.beginPath();
       ctx.arc(820, 280, 26, 0, Math.PI * 2);
       ctx.fillStyle = '#141416';
       ctx.fill();
 
-      // Sprouting onion
       ctx.beginPath();
       ctx.arc(450, 650, 90, 0, Math.PI * 2);
       ctx.fillStyle = '#A52D50';
@@ -201,7 +196,6 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
       ctx.lineWidth = 4;
       ctx.stroke();
 
-      // Sprout
       ctx.beginPath();
       ctx.moveTo(450, 560);
       ctx.lineTo(430, 490);
@@ -211,7 +205,6 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
       ctx.fillStyle = '#22C55E';
       ctx.fill();
 
-      // Mechanical damage onion
       ctx.beginPath();
 
       for (let deg = 0; deg <= 360; deg += 5) {
@@ -321,8 +314,20 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
   return (
     <div className="page-container">
 
-      {/* HERO */}
-      <section className="inspection-hero">
+      <div className="mobile-quick-hero">
+        <div className="mobile-quick-badge">
+          <img src={logoImg} alt="OnionIQ Logo" className="mobile-hero-logo" />
+          <span>AI QUALITY INSPECTION</span>
+        </div>
+        <h1 className="mobile-hero-heading">
+          Mandi Grading & Fair Pricing
+        </h1>
+        <p className="mobile-hero-sub">
+          Place onions in single layer with a ₹10 coin and snap a photo.
+        </p>
+      </div>
+
+      <section className="inspection-hero desktop-hero">
 
         <div className="hero-copy">
 
@@ -337,7 +342,7 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
           </h1>
 
           <p className="hero-description">
-            Capture an onion batch, let KandaGuru measure quality,
+            Capture an onion batch, let OnionIQ measure quality,
             classify the produce and estimate a transparent
             mandi value — all from a single image.
           </p>
@@ -414,8 +419,6 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
 
       </section>
 
-
-      {/* MAIN INSPECTION AREA */}
       <section className="section">
 
         <div className="section-title">
@@ -426,10 +429,8 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
           Capture a new batch or upload an existing image.
         </div>
 
-
         <div className="upload-layout">
 
-          {/* LEFT — IMAGE */}
           <div className="kanda-card">
 
             <div className="card-heading-row">
@@ -456,9 +457,7 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
             </div>
 
 
-            {/* VIEWFINDER */}
             <div className="camera-guide-container">
-
               {previewUrl ? (
                 <img
                   src={previewUrl}
@@ -467,31 +466,21 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
                 />
               ) : (
                 <div className="empty-camera-state">
-
                   <div className="camera-icon-circle">
                     <Camera size={32} />
                   </div>
-
                   <h3>Camera ready</h3>
-
                   <p>
                     Capture a fresh image or upload
                     a batch photo to begin.
                   </p>
-
                 </div>
               )}
 
-
-              {/* Overlay */}
               <div className="camera-guide-overlay">
-
                 <div className="guide-corner-coin">
-
                   <Coins size={18} />
-
                   <span>REFERENCE</span>
-
                   <strong>
                     {refType === 'INR_5_COIN'
                       ? '₹5 COIN'
@@ -499,35 +488,25 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
                       ? '₹10 COIN'
                       : 'CUSTOM'}
                   </strong>
-
                   <small>
                     {knownDiameter} mm
                   </small>
-
                 </div>
 
                 <div className="guide-sample-zone">
-
                   <span className="guide-sample-label">
                     Onion batch area
                   </span>
-
                 </div>
-
               </div>
-
             </div>
 
-
-            {/* ACTIONS */}
             <div className="upload-actions">
-
               <button
                 className="btn-mandi-primary"
-                onClick={() =>
-                  cameraInputRef.current?.click()
-                }
+                onClick={() => cameraInputRef.current?.click()}
                 disabled={isAnalyzing}
+                type="button"
               >
                 <Camera size={18} />
                 Capture photo
@@ -535,17 +514,14 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
 
               <button
                 className="btn-mandi-secondary"
-                onClick={() =>
-                  fileInputRef.current?.click()
-                }
+                onClick={() => fileInputRef.current?.click()}
                 disabled={isAnalyzing}
+                type="button"
               >
                 <Upload size={18} />
                 Upload image
               </button>
-
             </div>
-
 
             <input
               type="file"
@@ -553,9 +529,7 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
               accept="image/*"
               capture="environment"
               style={{ display: 'none' }}
-              onChange={(e) =>
-                handleFileSelect(e.target.files?.[0])
-              }
+              onChange={(e) => handleFileSelect(e.target.files?.[0])}
             />
 
             <input
@@ -563,25 +537,20 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
               ref={fileInputRef}
               accept="image/*"
               style={{ display: 'none' }}
-              onChange={(e) =>
-                handleFileSelect(e.target.files?.[0])
-              }
+              onChange={(e) => handleFileSelect(e.target.files?.[0])}
             />
 
-
-            {/* DEMO */}
             <button
               className="demo-button"
               onClick={handleLoadDemoSample}
               disabled={isAnalyzing}
+              type="button"
             >
               <Sparkles size={15} />
               Try synthetic mandi batch
               <ArrowRight size={14} />
             </button>
 
-
-            {/* CAPTURE RULES */}
             <div className="capture-rules">
 
               <div className="capture-rules-header">
@@ -646,8 +615,6 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
 
           </div>
 
-
-          {/* RIGHT — PARAMETERS */}
           <div className="kanda-card">
 
             <div className="card-heading-row">
@@ -668,8 +635,6 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
 
             </div>
 
-
-            {/* REFERENCE OBJECT */}
             <div className="field-group">
 
               <label className="field-label">
@@ -762,45 +727,69 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
 
             </div>
 
-
-            {/* PRICE */}
             <div className="field-group">
 
               <label className="field-label">
-                Baseline mandi rate
+                Baseline mandi rate / आधार भाव
               </label>
 
               <p className="field-help">
-                Starting market benchmark before quality
-                adjustments.
+                Market benchmark before quality deductions (per kg).
               </p>
 
-              <div className="price-input-wrapper">
+              <div className="price-stepper-control">
+                <button
+                  type="button"
+                  className="stepper-btn"
+                  onClick={() => setBasePrice(p => Math.max(5, p - 1))}
+                  aria-label="Decrease mandi price by 1 rupee"
+                >
+                  <Minus size={18} />
+                </button>
 
-                <IndianRupee size={18} />
+                <div className="price-input-wrapper">
+                  <IndianRupee size={18} />
+                  <input
+                    className="field-input price-input"
+                    type="number"
+                    step="0.5"
+                    min="5"
+                    max="200"
+                    value={basePrice}
+                    onChange={(e) =>
+                      setBasePrice(
+                        parseFloat(e.target.value) || 30
+                      )
+                    }
+                  />
+                  <span>per kg</span>
+                </div>
 
-                <input
-                  className="field-input price-input"
-                  type="number"
-                  step="0.5"
-                  min="5"
-                  max="200"
-                  value={basePrice}
-                  onChange={(e) =>
-                    setBasePrice(
-                      parseFloat(e.target.value) || 30
-                    )
-                  }
-                />
+                <button
+                  type="button"
+                  className="stepper-btn"
+                  onClick={() => setBasePrice(p => Math.min(200, p + 1))}
+                  aria-label="Increase mandi price by 1 rupee"
+                >
+                  <Plus size={18} />
+                </button>
+              </div>
 
-                <span>per kg</span>
-
+              <div className="price-preset-chips" aria-label="Mandi price presets">
+                {[20, 25, 30, 35, 40].map((val) => (
+                  <button
+                    key={val}
+                    type="button"
+                    className={`price-preset-chip ${basePrice === val ? 'active' : ''}`}
+                    onClick={() => setBasePrice(val)}
+                  >
+                    ₹{val}
+                  </button>
+                ))}
               </div>
 
             </div>
 
-
-            {/* ERROR */}
             {errorMsg && (
               <div className="error-banner">
 
@@ -811,8 +800,6 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
               </div>
             )}
 
-
-            {/* ANALYSIS */}
             {isAnalyzing ? (
               <div className="analysis-progress">
 
@@ -853,8 +840,6 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
               </p>
             )}
 
-
-            {/* OUTPUT PREVIEW */}
             <div className="output-preview">
 
               <div className="output-preview-title">
@@ -892,6 +877,20 @@ export default function UploadSection({ onAnalysisComplete, apiBaseUrl }) {
         </div>
 
       </section>
+
+      {selectedFile && !isAnalyzing && (
+        <div className="mobile-sticky-action-bar">
+          <button
+            type="button"
+            className="mobile-fab-inspect"
+            onClick={handleAnalyze}
+          >
+            <Sparkles size={18} />
+            <span>Grading & Mandi Rate (₹{basePrice}/kg)</span>
+            <ArrowRight size={18} />
+          </button>
+        </div>
+      )}
 
     </div>
   );

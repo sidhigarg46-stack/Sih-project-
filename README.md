@@ -1,4 +1,4 @@
-# 🧅 KandaGuru (कांदा गुरु) — AI Onion Quality Grading & Mandi Valuation System
+# 🧅 OnionIQ — AI Onion Quality Grading & Mandi Valuation System
 
 > **A local-only, classical Computer Vision (OpenCV) and AGMARK-compliant grading MVP for onions with transparent mandi pricing, storage risk evaluation, and LAN QR code sharing.**
 
@@ -30,7 +30,7 @@
 
 ## 🏛️ Architectural Principles
 
-KandaGuru was engineered to address the real-world operational challenges of Indian Agricultural Produce Market Committees (APMC Mandis) and rural cold storage warehouses:
+OnionIQ was engineered to address the real-world operational challenges of Indian Agricultural Produce Market Committees (APMC Mandis) and rural cold storage warehouses:
 1. **100% Local & Offline**: Operates completely without internet connectivity, cloud APIs, external paid services, or Docker containers.
 2. **Hybrid Edge Vision (Lightweight DL + Classical CV)**: Combines edge-optimized ONNX models (YOLO bulb detection via `best.onnx` + MobileNetV2 defect classification via `onion_classifier.onnx`) running locally on CPU via ONNX Runtime with deterministic classical CV (contour geometry and convexity defect analysis), requiring zero cloud APIs or dedicated GPUs.
 3. **Transparent Mathematical Valuation**: Every rupee deducted from the mandi price is fully explained with itemized formulas.
